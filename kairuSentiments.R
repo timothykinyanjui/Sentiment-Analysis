@@ -63,7 +63,9 @@ close(connection)
 
 
 ################ Send email survey ################
-#curl "https://api.wootric.com/v1/email_survey"
+#h2 = new_handle()
+#h2 <- handle_setform(h2, .list = list(access_token=my_access_token,emails="beth@kairuhairhub.co.uk",survey_immediately="true",survey_settings="Thank you!",subject="Would you mind telling us how we are performing?",intro="We are constantly looking for ways to improve our service. Your opinion matters to us"))
+#curl(url = "https://api.wootric.com/v1/email_survey", handle = h2, open = "r")
 #-d "access_token=access_token"
 #-d "emails[]=timothykinyanjui@gmail.com"
 #-d "survey_immediately=true"
@@ -107,7 +109,7 @@ data_tidy %>%
   ggplot2::coord_flip()
 
 # Create a word cloud
-qdap::trans_cloud(text.var = data_tidy$word, title.names = c("Most frequent words in customer reviews"), stem = FALSE, min.freq = 2)
+qdap::trans_cloud(text.var = data_tidy$word, title.names = c("Trending words"), stem = FALSE, min.freq = 2)
 
 # Tidy up and remove sensitive customer data
 file.remove(c("responsesData1.json","responsesData2.json","responsesData3.json"))
