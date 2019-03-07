@@ -113,5 +113,3 @@ qdap::trans_cloud(text.var = data_tidy$word, title.names = c("Trending words"), 
 
 # Tidy up and remove sensitive customer data
 file.remove(c("responsesData1.json","responsesData2.json","responsesData3.json"))
-
-            
