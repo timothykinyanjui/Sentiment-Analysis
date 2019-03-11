@@ -104,7 +104,7 @@ data_tidy %>%
   dplyr::mutate(word = reorder(word,n)) %>%
   ggplot2::ggplot(ggplot2::aes(word,n)) +
   ggplot2::geom_col() +
-  ggplot2::xlab("") +
+  ggplot2::xlab("Words") +
   ggplot2::ylab("Frequency") +
   ggplot2::coord_flip()
 
