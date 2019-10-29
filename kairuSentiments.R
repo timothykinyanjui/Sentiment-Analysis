@@ -11,6 +11,7 @@ require("curl")
 require("tm")
 require("getPass")
 require("jsonlite")
+library("topicmodels")
 
 ################ Fetch data - Wootric API ################
 
@@ -165,6 +166,8 @@ plot(plot2)
 #   theme_classic() + geom_abline(slope = 0, intercept = 0) +
 #   labs(x = "Date", y = "Sentiment", title = "Temporal sentiment dynamics") +
 #   theme(plot.title = element_text(hjust = 0.5))
+
+# Do topic modelling
 
 # Tidy up and remove sensitive customer data
 file.remove(c("responsesData1.json","responsesData2.json","responsesData3.json"))
