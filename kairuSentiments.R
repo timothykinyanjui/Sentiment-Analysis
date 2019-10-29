@@ -155,7 +155,7 @@ dataNew <- dataOrig %>% mutate(sentiment = overall)
 # Plot
 plot2 <- ggplot(dataNew) + geom_col(mapping = aes(x = c(nrow(dataNew):1),y = sentiment)) +
   theme_classic() + geom_abline(slope = 0, intercept = 0) + 
-  labs(x = "Sampled individuals", y = "Sentiment", title = "Temporal sentiment dynamics") +
+  labs(x = "Sampled individuals", y = "Sentiment", title = "Sentiment dynamics") +
   theme(plot.title = element_text(hjust = 0.5))
 plot(plot0)
 plot(plot2)
