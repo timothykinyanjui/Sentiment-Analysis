@@ -111,5 +111,8 @@ data_tidy %>%
 # Create a word cloud
 qdap::trans_cloud(text.var = data_tidy$word, title.names = c("Trending words"), stem = FALSE, min.freq = 2)
 
+# Sentiment analysis
+get_sentiments("afinn")
+
 # Tidy up and remove sensitive customer data
 file.remove(c("responsesData1.json","responsesData2.json","responsesData3.json"))
