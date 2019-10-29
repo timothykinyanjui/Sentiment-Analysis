@@ -64,14 +64,14 @@ close(connection)
 
 ################ Send email survey ################
 #h2 = new_handle()
-#h2 <- handle_setform(h2, .list = list(access_token=my_access_token,emails="beth@kairuhairhub.co.uk",survey_immediately="true",survey_settings="Thank you!",subject="Would you mind telling us how we are performing?",intro="We are constantly looking for ways to improve our service. Your opinion matters to us"))
-#curl(url = "https://api.wootric.com/v1/email_survey", handle = h2, open = "r")
-#-d "access_token=access_token"
-#-d "emails[]=timothykinyanjui@gmail.com"
-#-d "survey_immediately=true"
-#-d "survey_settings[custom_messages][followup_text]=Thank you!"
-#-d "subject=Would you mind telling us how we are performing?"
-#-d "intro=We are constantly looking for ways to improve our service. Your opinion matters to us"
+#h2 <- handle_setheaders(h2, .list = list(access_token=my_access_token,emails="beth@kairuhairhub.co.uk",survey_immediately="true",survey_settings="Thank you!",subject="Would you mind telling us how we are performing?",intro="We are constantly looking for ways to improve our service. Your opinion matters to us"))
+#curl(url = "https://api.wootric.com/v1/email_survey", handle = h2, open = "rb")
+# -d "access_token=access_token"
+# -d "emails[]=timothykinyanjui@gmail.com"
+# -d "survey_immediately=true"
+# -d "survey_settings[custom_messages][followup_text]=Thank you!"
+# -d "subject=Would you mind telling us how we are performing?"
+# -d "intro=We are constantly looking for ways to improve our service. Your opinion matters to us"
 
 ################ Read in json file and make dataframe/tibble ################
 dataUn1 <- stream_in(file("responsesData1.json"))
