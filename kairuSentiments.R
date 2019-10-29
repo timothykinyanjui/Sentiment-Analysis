@@ -106,13 +106,65 @@ data_tidy %>%
   ggplot2::geom_col() +
   ggplot2::xlab("Words") +
   ggplot2::ylab("Frequency") +
-  ggplot2::coord_flip()
+  ggplot2::coord_flip() -> plot0
+
 
 # Create a word cloud
-qdap::trans_cloud(text.var = data_tidy$word, title.names = c("Trending words"), stem = FALSE, min.freq = 2)
+plot1 <- qdap::trans_cloud(text.var = data_tidy$word, title.names = c("Trending words"), stem = FALSE, min.freq = 2)
 
-# Sentiment analysis
-get_sentiments("afinn")
+################## Sentiment analysis
+################ Analysis starts here ################
+dataOrig <- dataflat %>%
+  dplyr::select(score,text,created_at,id)%>%
+  na.omit() %>%
+  unique()
+
+# Load English stopwords
+stop_words_eng = tibble(word = stopwords(kind = "en"))
+
+# Load sentiment options
+bingSent <- get_sentiments("bing")
+
+# Pre-allocate
+overall <- rep(-10000,nrow(dataOrig))
+
+for (i in 1:nrow(dataOrig)){
+  
+  #Extract the dataset
+  dataSub <- dataOrig[i,]
+  
+  # Tokenize so that each row is a word
+  dataSub_un <- dataSub %>% tidytext::unnest_tokens(word,text)
+  
+  # Remove the stop words
+  dataSub_tidy <- dataSub_un %>% dplyr::anti_join(stop_words_eng, by = "word")
+  
+  # Check sentiment
+  sentimentD <- dataSub_tidy %>% inner_join(bingSent, by = "word")
+  
+  # Count positive words
+  pos <- sum(sentimentD$sentiment=="positive")
+  neg <- sum(sentimentD$sentiment=="negative")
+  overall[i] <-  pos - neg
+  
+}
+
+# Attach the sentiment to the original dataset
+dataNew <- dataOrig %>% mutate(sentiment = overall)
+
+# Plot
+plot2 <- ggplot(dataNew) + geom_col(mapping = aes(x = c(nrow(dataNew):1),y = sentiment)) +
+  theme_classic() + geom_abline(slope = 0, intercept = 0) + 
+  labs(x = "Sampled individuals", y = "Sentiment", title = "Temporal sentiment dynamics") +
+  theme(plot.title = element_text(hjust = 0.5))
+plot(plot0)
+plot(plot2)
+
+# # Plot
+# ggplot(dataNew) + geom_col(mapping = aes(x = as.Date(created_at),y = sentiment)) +
+#   theme_classic() + geom_abline(slope = 0, intercept = 0) +
+#   labs(x = "Date", y = "Sentiment", title = "Temporal sentiment dynamics") +
+#   theme(plot.title = element_text(hjust = 0.5))
 
 # Tidy up and remove sensitive customer data
 file.remove(c("responsesData1.json","responsesData2.json","responsesData3.json"))
