@@ -73,6 +73,8 @@ close(connection)
 # -d "survey_settings[custom_messages][followup_text]=Thank you!"
 # -d "subject=Would you mind telling us how we are performing?"
 # -d "intro=We are constantly looking for ways to improve our service. Your opinion matters to us"
+# curl -i https://api.wootric.com/oauth/token -F grant_type=password -F username=beth@kairuhairhub.co.uk -F password=
+# curl "https://api.wootric.com/v1/email_survey" -d "access_token=87a4c5aa4965c0584b7b9ba36104f52cc14c45f025303d60f77e0da2c06cafa8" -d "emails[]=fannysue45@gmail.com" -d "survey_immediately=true"
 
 ################ Read in json file and make dataframe/tibble ################
 dataUn1 <- stream_in(file("responsesData1.json"))
@@ -130,24 +132,24 @@ bingSent <- get_sentiments("bing")
 overall <- rep(-10000,nrow(dataOrig))
 
 for (i in 1:nrow(dataOrig)){
-  
+
   #Extract the dataset
   dataSub <- dataOrig[i,]
-  
+
   # Tokenize so that each row is a word
   dataSub_un <- dataSub %>% tidytext::unnest_tokens(word,text)
-  
+
   # Remove the stop words
   dataSub_tidy <- dataSub_un %>% dplyr::anti_join(stop_words_eng, by = "word")
-  
+
   # Check sentiment
   sentimentD <- dataSub_tidy %>% inner_join(bingSent, by = "word")
-  
+
   # Count positive words
   pos <- sum(sentimentD$sentiment=="positive")
   neg <- sum(sentimentD$sentiment=="negative")
   overall[i] <-  pos - neg
-  
+
 }
 
 # Attach the sentiment to the original dataset
@@ -155,7 +157,7 @@ dataNew <- dataOrig %>% mutate(sentiment = overall, xx = c(nrow(dataOrig):1))
 
 # Plot
 plot2 <- ggplot(dataNew) + geom_col(mapping = aes(x = xx,y = sentiment)) +
-  theme_classic() + geom_abline(slope = 0, intercept = 0) + 
+  theme_classic() + geom_abline(slope = 0, intercept = 0) +
   labs(x = "Sampled individuals", y = "Sentiment", title = "Sentiment dynamics") +
   theme(plot.title = element_text(hjust = 0.5))
 plot(plot0)
@@ -205,10 +207,10 @@ plot(plot3)
 
 tidy(sent_lda)
 # plot3 <- ggplot(tidytopcs) + geom_col(mapping = aes(x = xx,y = sentiment, fill = as.factor(topic))) +
-#   theme_classic() + geom_abline(slope = 0, intercept = 0) + 
+#   theme_classic() + geom_abline(slope = 0, intercept = 0) +
 #   labs(x = "Sampled individuals", y = "Sentiment", title = "Sentiment dynamics") +
 #   theme(plot.title = element_text(hjust = 0.5))
-  
+
 
 # Tidy up and remove sensitive customer data
 file.remove(c("responsesData1.json","responsesData2.json","responsesData3.json"))
