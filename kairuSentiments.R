@@ -151,10 +151,10 @@ for (i in 1:nrow(dataOrig)){
 }
 
 # Attach the sentiment to the original dataset
-dataNew <- dataOrig %>% mutate(sentiment = overall)
+dataNew <- dataOrig %>% mutate(sentiment = overall, xx = c(nrow(dataNew):1))
 
 # Plot
-plot2 <- ggplot(dataNew) + geom_col(mapping = aes(x = c(nrow(dataNew):1),y = sentiment)) +
+plot2 <- ggplot(dataNew) + geom_col(mapping = aes(x = xx,y = sentiment)) +
   theme_classic() + geom_abline(slope = 0, intercept = 0) + 
   labs(x = "Sampled individuals", y = "Sentiment", title = "Sentiment dynamics") +
   theme(plot.title = element_text(hjust = 0.5))
@@ -167,7 +167,46 @@ plot(plot2)
 #   labs(x = "Date", y = "Sentiment", title = "Temporal sentiment dynamics") +
 #   theme(plot.title = element_text(hjust = 0.5))
 
-# Do topic modelling
+##################### Do topic modelling
+
+# Tokenize so that each row is a word
+dataTidy <- dataOrig %>% tidytext::unnest_tokens(word,text) %>%
+  dplyr::anti_join(stop_words_eng, by = "word")
+
+
+# Count words
+dataTidy %>% group_by(id) %>% count(word) -> lda_words
+
+sent_dtm <- cast_dtm(lda_words, id, word, n)
+
+sent_lda <- LDA(sent_dtm, k = 2, method = "Gibbs", control = list(seed = 1990, verbose = 1))
+
+# Show tally of topics
+table(topics(sent_lda))
+
+# Show tally of k words per topic
+terms(sent_lda,3)
+
+# Extract a tibble for each customer sentiment
+topcs <- enframe(topics(sent_lda))
+
+# Rename columns
+topcs <- topcs %>% rename(topic = value, id = name)
+topcs$id = as.integer(topcs$id)
+
+# Add topics to the dataset
+tidytopcs <- dataNew %>% inner_join(topcs, by = "id")
+
+# Plot dots to determine the topics for each response
+plot3 <- plot2 + geom_point(tidytopcs, mapping = aes(x = xx,y = (sentiment/2), color = as.factor(topic))) +
+  labs(fill = "Topics")
+plot(plot3)
+
+# plot3 <- ggplot(tidytopcs) + geom_col(mapping = aes(x = xx,y = sentiment, fill = as.factor(topic))) +
+#   theme_classic() + geom_abline(slope = 0, intercept = 0) + 
+#   labs(x = "Sampled individuals", y = "Sentiment", title = "Sentiment dynamics") +
+#   theme(plot.title = element_text(hjust = 0.5))
+  
 
 # Tidy up and remove sensitive customer data
 file.remove(c("responsesData1.json","responsesData2.json","responsesData3.json"))
