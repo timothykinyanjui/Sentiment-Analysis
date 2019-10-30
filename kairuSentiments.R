@@ -199,10 +199,11 @@ tidytopcs <- dataNew %>% inner_join(topcs, by = "id")
 
 # Plot dots to determine the topics for each response
 plot3 <- plot2 + geom_point(tidytopcs, mapping = aes(x = xx,y = (sentiment/2), color = as.factor(topic))) +
-  labs(color = "Topics", title = "Sentiment and topics") + scale_x_continuous(breaks = seq(0,60,10)) +
+  labs(color = "Topics", title = "Sentiment and topics") + scale_x_continuous(breaks = seq(0,max(dataNew$xx)+1,10)) +
   scale_color_discrete(labels = c("1(Person)","2(Service)"))
 plot(plot3)
 
+tidy(sent_lda)
 # plot3 <- ggplot(tidytopcs) + geom_col(mapping = aes(x = xx,y = sentiment, fill = as.factor(topic))) +
 #   theme_classic() + geom_abline(slope = 0, intercept = 0) + 
 #   labs(x = "Sampled individuals", y = "Sentiment", title = "Sentiment dynamics") +
