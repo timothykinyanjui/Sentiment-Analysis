@@ -151,7 +151,7 @@ for (i in 1:nrow(dataOrig)){
 }
 
 # Attach the sentiment to the original dataset
-dataNew <- dataOrig %>% mutate(sentiment = overall, xx = c(nrow(dataNew):1))
+dataNew <- dataOrig %>% mutate(sentiment = overall, xx = c(nrow(dataOrig):1))
 
 # Plot
 plot2 <- ggplot(dataNew) + geom_col(mapping = aes(x = xx,y = sentiment)) +
@@ -199,7 +199,7 @@ tidytopcs <- dataNew %>% inner_join(topcs, by = "id")
 
 # Plot dots to determine the topics for each response
 plot3 <- plot2 + geom_point(tidytopcs, mapping = aes(x = xx,y = (sentiment/2), color = as.factor(topic))) +
-  labs(fill = "Topics")
+  labs(color = "Topics", title = "Sentiment and topics") + scale_x_continuous(breaks = seq(0,60,10))
 plot(plot3)
 
 # plot3 <- ggplot(tidytopcs) + geom_col(mapping = aes(x = xx,y = sentiment, fill = as.factor(topic))) +
